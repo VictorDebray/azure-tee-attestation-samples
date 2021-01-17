@@ -33,7 +33,7 @@ target_include_directories(server_host PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/../ # For common/shared.h
   ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(server_host openenclave::oehostapp ${_GRPC_GRPCPP_UNSECURE}
+target_link_libraries(server_host openenclave::oehost ${_GRPC_GRPCPP_UNSECURE}
   ${_PROTOBUF_LIBPROTOBUF})
 
 if(WIN32)
