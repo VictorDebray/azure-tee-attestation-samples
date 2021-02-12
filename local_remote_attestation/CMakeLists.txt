@@ -3,11 +3,22 @@
 
 cmake_minimum_required(VERSION 3.11)
 
+if (LVI_MITIGATION MATCHES ControlFlow)
+  # Configure the cmake to use customized compilation toolchain.
+  # This package has to be added before `project()`.
+  find_package(OpenEnclave-LVI-Mitigation CONFIG REQUIRED)
+endif ()
+
 project("Remote Attestation Sample" LANGUAGES C CXX)
 
 find_package(OpenEnclave CONFIG REQUIRED)
 
 set(CMAKE_CXX_STANDARD 11)
+set(OE_CRYPTO_LIB
+    mbedtls
+    CACHE STRING "Crypto library used by enclaves.")
+
+set(OE_INCLUDE_DIR "/opt/openenclave/include")
 
 add_subdirectory(common)
 add_subdirectory(enclave_a)

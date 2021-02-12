@@ -4,16 +4,20 @@
 # Use the edger8r to generate C bindings from the EDL file.
 add_custom_command(OUTPUT secretsharing_t.h secretsharing_t.c secretsharing_args.h
   DEPENDS ${CMAKE_SOURCE_DIR}/secretsharing.edl
-  COMMAND openenclave::oeedger8r --trusted ${CMAKE_SOURCE_DIR}/secretsharing.edl)
+  COMMAND openenclave::oeedger8r --trusted ${CMAKE_SOURCE_DIR}/secretsharing.edl
+  --search-path ${OE_INCLUDEDIR}
+  --search-path ${OE_INCLUDEDIR}/openenclave/edl/sgx)
 
 # Create a library common to each of our two enclaves.
-add_library(common STATIC attestation.cpp crypto.cpp dispatcher.cpp keys.cpp ${CMAKE_CURRENT_BINARY_DIR}/secretsharing_t.c)
+add_library(common STATIC attestation.cpp crypto.cpp dispatcher.cpp keys.cpp 
+                          ${CMAKE_CURRENT_BINARY_DIR}/secretsharing_t.c)
 
 if(WIN32)
   maybe_build_using_clangw(common)
 endif()
 
 target_compile_definitions(common PUBLIC OE_API_VERSION=2)
+
 target_link_libraries(common PUBLIC
   # `liboecore`, a dependency of `liboeenclave`, requires the ecalls
   # function table. Because the libraries linking `libcommon` do not
@@ -23,6 +27,6 @@ target_link_libraries(common PUBLIC
   # Alternatively we could use a CMake OBJECT library, but that
   # requires a newish version of CMake.
   $<$<PLATFORM_ID:Linux>:-Wl,--require-defined=__oe_ecalls_table>
-  openenclave::oeenclave
+  openenclave::oeenclave openenclave::oecrypto${OE_CRYPTO_LIB}
   openenclave::oelibcxx)
 target_include_directories(common PUBLIC ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR})

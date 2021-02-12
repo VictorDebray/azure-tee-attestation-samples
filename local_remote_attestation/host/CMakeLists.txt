@@ -3,9 +3,12 @@
 
 add_custom_command(OUTPUT secretsharing_u.h secretsharing_u.c secretsharing_args.h
   DEPENDS ${CMAKE_SOURCE_DIR}/secretsharing.edl
-  COMMAND openenclave::oeedger8r --untrusted ${CMAKE_SOURCE_DIR}/secretsharing.edl)
+  COMMAND openenclave::oeedger8r --untrusted ${CMAKE_SOURCE_DIR}/secretsharing.edl
+  --search-path ${OE_INCLUDE_DIR} 
+  --search-path ${OE_INCLUDEDIR}/openenclave/edl/sgx)
 
 add_executable(remote_attestation_host host.cpp encryption.cpp enclave_a.cpp enclave_b.cpp ${CMAKE_CURRENT_BINARY_DIR}/secretsharing_u.c)
+
 target_include_directories(remote_attestation_host PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/../ # For common/shared.h
   ${CMAKE_CURRENT_BINARY_DIR})
