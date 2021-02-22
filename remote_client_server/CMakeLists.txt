@@ -8,10 +8,13 @@ project("Remote Attestation Sample" LANGUAGES C CXX)
 find_package(OpenEnclave CONFIG REQUIRED)
 
 set(CMAKE_CXX_STANDARD 11)
+set(OE_CRYPTO_LIB
+    mbedtls
+    CACHE STRING "Crypto library used by enclaves.")
 
 set(protobuf_MODULE_COMPATIBLE TRUE)
 find_package(Protobuf CONFIG REQUIRED)
-message(STATUS "Using protobuf ${protobuf_VERSION}")
+message(STATUS "Using protobuf ${Protobuf_VERSION}")
 
 set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
 if(CMAKE_CROSSCOMPILING)
@@ -35,6 +38,7 @@ endif()
 add_subdirectory(common)
 add_subdirectory(enclave_a)
 add_subdirectory(enclave_b)
+add_subdirectory(client)
 add_subdirectory(server)
 add_subdirectory(client)
 

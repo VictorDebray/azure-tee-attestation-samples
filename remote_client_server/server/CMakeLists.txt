@@ -3,7 +3,9 @@
 
 add_custom_command(OUTPUT secretsharing_u.h secretsharing_u.c secretsharing_args.h
   DEPENDS ${CMAKE_SOURCE_DIR}/secretsharing.edl
-  COMMAND openenclave::oeedger8r --untrusted ${CMAKE_SOURCE_DIR}/secretsharing.edl)
+  COMMAND openenclave::oeedger8r --untrusted ${CMAKE_SOURCE_DIR}/secretsharing.edl
+  --search-path ${OE_INCLUDEDIR} --search-path
+  ${OE_INCLUDEDIR}/openenclave/edl/sgx)
 
 # Proto file
 set(SS_PROTO_PATH "${CMAKE_SOURCE_DIR}/proto/")
@@ -33,8 +35,10 @@ target_include_directories(server_host PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/../ # For common/shared.h
   ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(server_host openenclave::oehost ${_GRPC_GRPCPP_UNSECURE}
-  ${_PROTOBUF_LIBPROTOBUF})
+target_link_libraries(server_host 
+  openenclave::oehost
+  openenclave::oecrypto${OE_CRYPTO_LIB} 
+  openenclave::oelibcxx)
 
 if(WIN32)
   add_dcap_client_target(remote_attestation_dcap_target)

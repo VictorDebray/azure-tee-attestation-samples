@@ -9,7 +9,9 @@ endif()
 
 target_include_directories(enclave_a PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(enclave_a common)
+target_link_libraries(enclave_a common
+  openenclave::oeenclave openenclave::oecrypto${OE_CRYPTO_LIB}
+  openenclave::oelibcxx)
 
 # Generate key A
 add_custom_command(OUTPUT private_a.pem public_a.pem

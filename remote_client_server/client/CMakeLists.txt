@@ -3,7 +3,9 @@
 
 add_custom_command(OUTPUT secretsharing_u.h secretsharing_u.c secretsharing_args.h
   DEPENDS ${CMAKE_SOURCE_DIR}/secretsharing.edl
-  COMMAND openenclave::oeedger8r --untrusted ${CMAKE_SOURCE_DIR}/secretsharing.edl)
+  COMMAND openenclave::oeedger8r --untrusted ${CMAKE_SOURCE_DIR}/secretsharing.edl
+  --search-path ${OE_INCLUDEDIR} --search-path
+  ${OE_INCLUDEDIR}/openenclave/edl/sgx)
 
 # Proto file
 set(SS_PROTO_PATH "${CMAKE_SOURCE_DIR}/proto/")
@@ -33,7 +35,10 @@ target_include_directories(client_host PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/../ # For common/shared.h
   ${CMAKE_CURRENT_BINARY_DIR})
 
-target_link_libraries(client_host openenclave::oehostapp ${_GRPC_GRPCPP_UNSECURE}
+target_link_libraries(client_host 
+  openenclave::oehost
+  openenclave::oecrypto${OE_CRYPTO_LIB} 
+  openenclave::oelibcxx
   ${_PROTOBUF_LIBPROTOBUF})
 
 if(WIN32)
